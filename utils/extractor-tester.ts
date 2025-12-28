@@ -1,5 +1,7 @@
 import { DOMParser } from "https://deno.land/x/deno_dom@v0.1.56/deno-dom-wasm.ts";
-import { extractElementFromHtml, treeDrawer } from "./extractors.ts";
+import { treeDrawer, visualizeSerializedElement } from "./_extractors.ts";
+import { extractElementFromHtml_ } from "./_extractors.ts";
+import { fromElementToJsonElement } from "./types.ts";
 
 const pieceOfDom = `
 <section id="products">
@@ -9917,17 +9919,19 @@ export function getSampleDom() {
     const root = new DOMParser().parseFromString(pieceOfDom, "text/html");
     if (!root)
         return;
-    const content = root.querySelector(".products.product-thumbs");
+    const content = root.querySelector(".item-product");
     if (!content)
         return;
 
     console.log("Extracted DOM Tree:");
     console.log(root);
 
-    const tree = extractElementFromHtml(content);
+    const tree = extractElementFromHtml_(content);
     if (!tree)
         return;
-    treeDrawer(tree);
+    // Serialize the tree to JSON and print it
+    const serializedElement = fromElementToJsonElement(tree);
+    console.log(visualizeSerializedElement(serializedElement));
 }
 
 if (import.meta.main) {
